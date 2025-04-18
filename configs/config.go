@@ -24,29 +24,28 @@ func init() {
 }
 
 func loadConfig() (*Config, error) {
-	viper.SetConfigName("app_config")
 	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
-	viper.SetConfigFile(".env")
 
-	// Permite override por variáveis de ambiente
+	// Habilita o carregamento de variáveis de ambiente
 	viper.AutomaticEnv()
 
-	// Tenta ler o arquivo .env, mas não falha se não encontrar
+	// Tenta ler o arquivo .env, mas ignora se não existir
+	viper.SetConfigFile(".env")
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			// Só retorna erro se não for um erro de arquivo não encontrado
-			return nil, fmt.Errorf("erro ao ler arquivo de configuração: %w", err)
-		}
 		fmt.Println("Arquivo .env não encontrado. Usando variáveis de ambiente.")
 	}
 
 	// Define valores padrão
-	viper.SetDefault("WEATHER_API_KEY", "") // Você pode definir um valor padrão se desejar
+	viper.SetDefault("WEATHER_API_KEY", "")
 
+	// Cria uma nova instância de Config
 	config := &Config{}
-	if err := viper.Unmarshal(config); err != nil {
-		return nil, fmt.Errorf("erro ao processar configurações: %w", err)
+
+	// Tenta carregar variáveis de ambiente diretamente
+	weatherAPIKey := viper.GetString("WEATHER_API_KEY")
+	if weatherAPIKey != "" {
+		config.WeatherAPIKey = weatherAPIKey
 	}
 
 	// Validação das configurações obrigatórias
@@ -55,4 +54,5 @@ func loadConfig() (*Config, error) {
 	}
 
 	return config, nil
+
 }
