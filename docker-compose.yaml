@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    container_name: temperatureserver
+    ports:
+      - 8080:8080
+    volumes:
+      - ./.env:/app/.env

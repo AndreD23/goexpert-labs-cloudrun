@@ -1,9 +1,23 @@
 FROM golang:1.23 as build
-WORKDIR /app
+
+# Criar e definir o diretório de trabalho
+WORKDIR /go/src/app
+
+# Copiar os arquivos go.mod e go.sum primeiro
+COPY go.mod go.sum ./
+
+# Baixar as dependências
+RUN go mod download
+
+# Copiar o resto do código fonte
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o cloudrun
+
+# Compilar a aplicação
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /go/bin/cloudrun ./cmd/...
 
 FROM scratch
-WORKDIR /APP
-COPY --from=build /app/cloudrun .
-ENTRYPOINT ["./cloudrun"]
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+WORKDIR /app
+COPY --from=build /go/bin/cloudrun /app/
+COPY --from=build /go/src/app/.env /app/
+ENTRYPOINT ["/app/cloudrun"]

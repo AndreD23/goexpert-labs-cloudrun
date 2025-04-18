@@ -39,30 +39,23 @@ func (t *TemperatureHandler) GetTemperature(w http.ResponseWriter, r *http.Reque
 
 	cleanZip, err := t.validateZipCode(zipCode)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		w.Write([]byte("invalid zipcode"))
+		http.Error(w, "invalid zipcode", http.StatusUnprocessableEntity)
 		return
 	}
 
 	city, err := t.viaCEP.GetCityByZipCode(cleanZip)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if city == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("can not find zipcode"))
+		http.Error(w, "can not find zipcode", http.StatusNotFound)
+		return
 	}
 
 	weatherResponse, err := t.weatherAPI.GetTempByCity(city)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
