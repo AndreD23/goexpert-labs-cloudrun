@@ -19,5 +19,4 @@ FROM scratch
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 WORKDIR /app
 COPY --from=build /go/bin/cloudrun /app/
-COPY --from=build /go/src/app/.env /app/
 ENTRYPOINT ["/app/cloudrun"]
