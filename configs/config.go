@@ -5,7 +5,7 @@ import "github.com/spf13/viper"
 var config *Config
 
 type Config struct {
-	WeatherAPI string `mapstructure:"WEATHER_API"`
+	WeatherAPIKey string `mapstructure:"WEATHER_API_KEY"`
 }
 
 func NewConfig() *Config {
@@ -24,6 +24,6 @@ func init() {
 	}
 
 	config = &Config{
-		WeatherAPI: viper.GetString("WEATHER_API"),
+		WeatherAPIKey: viper.GetString("WEATHER_API_KEY"),
 	}
 }
