@@ -10,12 +10,14 @@ import (
 )
 
 type TemperatureHandler struct {
-	*weatherapi.WeatherAPI
+	viaCEP     viacep.ViaCEPInterface
+	weatherAPI weatherapi.WeatherAPIInterface
 }
 
 func New(weatherAPI *weatherapi.WeatherAPI) *TemperatureHandler {
 	return &TemperatureHandler{
-		WeatherAPI: weatherAPI,
+		viaCEP:     viacep.NewViaCEPService(),
+		weatherAPI: weatherAPI,
 	}
 }
 
@@ -43,7 +45,7 @@ func (t *TemperatureHandler) GetTemperature(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	city, err := viacep.GetCityByZipCode(cleanZip)
+	city, err := t.viaCEP.GetCityByZipCode(cleanZip)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -56,7 +58,7 @@ func (t *TemperatureHandler) GetTemperature(w http.ResponseWriter, r *http.Reque
 		w.Write([]byte("can not find zipcode"))
 	}
 
-	weatherResponse, err := t.WeatherAPI.GetTempByCity(city)
+	weatherResponse, err := t.weatherAPI.GetTempByCity(city)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)

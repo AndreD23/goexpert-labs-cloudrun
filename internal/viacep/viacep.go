@@ -17,7 +17,7 @@ func GetCityByZipCode(zipCode string) (string, error) {
 	var data ViaCEP
 	err := utils.FetchData(url, &data)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	return data.Localidade, nil
