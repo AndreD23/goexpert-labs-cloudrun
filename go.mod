@@ -1,4 +1,4 @@
-module github.com/AndreD23/mba-goexpert/labs/00-deploy-com-cloud-run
+module github.com/AndreD23/goexpert-labs-cloudrun
 
 go 1.24.2
 

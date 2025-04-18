@@ -2,7 +2,7 @@ package weatherapi
 
 import (
 	"fmt"
-	"github.com/AndreD23/mba-goexpert/labs/00-deploy-com-cloud-run/pkg/utils"
+	"github.com/AndreD23/goexpert-labs-cloudrun/pkg/utils"
 	"net/url"
 )
 
@@ -14,7 +14,7 @@ type Response struct {
 	Temperature struct {
 		TempC float64 `json:"temp_c"`
 		TempF float64 `json:"temp_f"`
-		TempK float64
+		TempK float64 `json:"temp_k"`
 	} `json:"current"`
 }
 

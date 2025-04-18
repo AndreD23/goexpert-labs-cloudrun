@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/AndreD23/mba-goexpert/labs/00-deploy-com-cloud-run/internal/viacep"
-	"github.com/AndreD23/mba-goexpert/labs/00-deploy-com-cloud-run/internal/weatherapi"
+	"github.com/AndreD23/goexpert-labs-cloudrun/internal/viacep"
+	"github.com/AndreD23/goexpert-labs-cloudrun/internal/weatherapi"
 	"github.com/go-chi/chi/v5"
 	"net/http"
-	"net/url"
 )
 
 type TemperatureHandler struct {
@@ -28,8 +28,6 @@ func (t *TemperatureHandler) GetTemperature(w http.ResponseWriter, r *http.Reque
 		panic(err)
 	}
 
-	cityEscaped := url.QueryEscape(city)
-
 	weatherResponse, err := t.WeatherAPI.GetTempByCity(city)
 	if err != nil {
 		panic(err)
@@ -38,5 +36,5 @@ func (t *TemperatureHandler) GetTemperature(w http.ResponseWriter, r *http.Reque
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Buscando a temperatura da cidade: " + cityEscaped))
+	json.NewEncoder(w).Encode(weatherResponse.Temperature)
 }
